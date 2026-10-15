@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 1: Disk Storage, File Structures, and Hashing</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --accent-gradient: linear-gradient(135deg, #00acc1, #1e88e5);
+            --code-bg: #2d2d2d;
+            --border-color: #333;
+        }
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 16px;
+            line-height: 1.6;
+        }
+        header {
+            background: var(--accent-gradient);
+            color: white;
+            padding: 24px 16px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        header h1 {
+            margin: 0 0 8px 0;
+            font-size: 1.5rem;
+        }
+        header p {
+            margin: 0;
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .card h2 {
+            font-size: 1.1rem;
+            color: #4dd0e1;
+            margin-top: 0;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+        .translation {
+            background-color: rgba(0, 172, 193, 0.1);
+            border-right: 4px solid #00acc1;
+            padding: 8px 12px;
+            margin: 8px 0;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        .explanation {
+            margin: 12px 0;
+        }
+        .flow-btns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 12px 0;
+        }
+        .flow-btn {
+            background-color: #263238;
+            color: #80deea;
+            border: 1px solid #00acc1;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+        code-box {
+            display: block;
+            direction: ltr;
+            text-align: left;
+            background-color: var(--code-bg);
+            color: #ffcc80;
+            padding: 10px;
+            border-radius: 6px;
+            font-family: monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+            font-size: 0.85rem;
+        }
+        .summary-card {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            border: none;
+        }
+        .summary-card h2 {
+            color: #ffeb3b;
+            border-bottom-color: rgba(255,255,255,0.2);
+        }
+        ul {
+            padding-right: 20px;
+            margin: 8px 0;
+        }
+        li {
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Module 1: Disk Storage, Basic File Structures, and Hashing</h1>
+        <p>ترجمة + شرح + ملخص لشرائح المحاضرة — مادة إدارة قواعد البيانات</p>
+    </header>
+
+    <!-- الملخص العام -->
+    <div class="card summary-card">
+        <h2>📌 الملخص العام للموديول</h2>
+        <p>يغطي هذا الموديول كيفية تخزين بيانات قواعد البيانات فعلياً على الأقراص الصلبة <span lang="en">Secondary Storage Devices</span>، وكيفية تنظيم السجلات داخل البلوكات <span lang="en">Blocks</span>، بالإضافة إلى الطرق المختلفة لتنظيم الملفات سواء كانت غير مرتبة <span lang="en">Heap Files</span>، أو مرتبة <span lang="en">Sorted Files</span>، أو باستخدام التجزئة <span lang="en">Hashing</span> وتحسين الأداء عبر تقنيات مثل <span lang="en">RAID</span>.</p>
+    </div>
+
+    <!-- الشرائح 5-8 -->
+    <div class="card">
+        <h2>الشرائح 5–8: أجهزة تخزين الأقراص وهياكل البلوكات (Disk Storage Devices & Blocks)</h2>
+        <div class="translation">
+            <strong>الترجمة:</strong> الأقراص المغناطيسية هي الوسيلة المفضلة للتخزين الثانوي بسبب سعتها العالية وتكلفتها المنخفضة. تُقسم الأقراص إلى مسارات دائرية <span lang="en">Tracks</span> وم قطاعات <span lang="en">Sectors/Blocks</span>.
+        </div>
+        <div class="explanation">
+            <p>يشرح هذا الجزء كيفية تخزين البيانات فيزيائياً. يتم نقل البيانات بين القرص <span lang="en">Disk</span> والذاكرة الرئيسية <span lang="en">Main Memory</span> على هيئة بلوكات كاملة بحجم ثابت <span lang="en">Block Size B</span>. عملية القراءة والكتابة تستغرق وقتاً بسبب زمن البحث <span lang="en">Seek Time s</span> التأخير الدوراني <span lang="en">Rotational Delay rd</span>.</p>
+        </div>
+        <div class="flow-btns">
+            <span class="flow-btn">Cylinder (أسوانة)</span>
+            <span class="flow-btn">Track (مسار)</span>
+            <span class="flow-btn">Sector/Block (قطاع/بلوك)</span>
+        </div>
+    </div>
+
+    <!-- الشرائح 9-14 -->
+    <div class="card">
+        <h2>الشرائح 9–14: تخزين سجلات الملفات والبلوكات (Placing File Records & Buffering)</h2>
+        <div class="translation">
+            <strong>الترجمة:</strong> السجلات قد تكون ثابتة أو متغيرة الطول. التجميع <span lang="en">Blocking</span> هو تخزين عدة سجلات في بلوك واحد، وعامل التجميع هو <span lang="en">Blocking Factor bfr</span>.
+        </div>
+        <div class="explanation">
+            <p>يتم تنظيم السجلات داخل الملفات إما بشكل <span lang="en">Unspanned</span> (حيث لا يمكن للسجل أن يمتد عبر بلوكين) أو <span lang="en">Spanned</span> (حيث يتقسم السجل على أكثر من بلوك إذا كان حجمه أكبر من البلوك الواحد). كما تتضمن العمليات الأساسية على الملفات أوامر مثل <span lang="en">OPEN, FIND, READ, INSERT, DELETE, MODIFY, CLOSE</span>.</p>
+        </div>
+    </div>
+
+    <!-- الشرائح 15-20 -->
+    <div class="card">
+        <h2>الشرائح 15–20: الملفات غير المرتبة والمرتبة (Unordered & Ordered Files)</h2>
+        <div class="translation">
+            <strong>الترجمة:</strong> الملفات غير المرتبة تسمى <span lang="en">Heap Files</span> وتتطلب بحثاً خطياً <span lang="en">Linear Search</span>. أما الملفات المرتبة <span lang="en">Sequential Files</span> فتتيح استخدام البحث الثنائي <span lang="en">Binary Search</span>.</p>
+        </div>
+        <div class="explanation">
+            <p>في الملفات غير المرتبة، تُضاف السجلات الجديدة دائماً في نهاية الملف، مما يجعل البحث مكلفاً (نحتاج لفحص نصف البلوكات في المتوسط $b/2$). بينما الملفات المرتبة تسهل عملية البحث الثنائي لتصبح التكلفة $\log_2 b$، ولكن عمليات الإدراج فيها تكون مكلفة وتحتاج أحياناً إلى ملفات فائضة <span lang="en">Overflow Files</span>.</p>
+        </div>
+        <code-box>
+// Average Access Cost Comparison:
+Heap File: b / 2
+Ordered File (Binary Search): log2(b)
+        </code-box>
+    </div>
+
+    <!-- الشرائح 21-25 -->
+    <div class="card">
+        <h2>الشرائح 21–25: ملفات التجزئة والتخزين الديناميكي (Hashed Files & Extendible Hashing)</h2>
+        <div class="translation">
+            <strong>الترجمة:</strong> التجزئة الخارجية <span lang="en">External Hashing</span> تقسم البلوكات إلى <span lang="en">M</span> دلو <span lang="en">Buckets</span> باستخدام دالة تجزئة <span lang="en">Hash Function h(K)</span>.
+        </div>
+        <div class="explanation">
+            <p>تستخدم التجزئة للوصول السريع للبيانات باستخدام مفتاح التجزئة <span lang="en">Hash Key</span>. عند امتلاء الدلو تحدث تصادمات <span lang="en">Collisions</span> يتم حلها عبر طرق مثل المعالجة المفتوحة <span lang="en">Open Addressing</span> أو السلسلة <span lang="en">Chaining</span>. كما توجد تقنيات متطورة مثل التجزئة القابلة للتمديد <span lang="en">Extendible Hashing</span> لتجنب مشاكل الثبات في الحجم.</p>
+        </div>
+    </div>
+
+    <!-- الشرائح 26-37 -->
+    <div class="card">
+        <h2>الشرائح 26–37: تقنية RAID وشبكات التخزين (RAID Technology & SANs)</h2>
+        <div class="translation">
+            <strong>الترجمة:</strong> تقنية <span lang="en">RAID</span> تعني المصفوفات الزائدة من الأقراص غير المكلفة <span lang="en">Redundant Arrays of Independent Disks</span> لزيادة الأداء والموثوقية عبر توزيع البيانات <span lang="en">Data Striping</span>.
+        </div>
+        <div class="explanation">
+            <p>تتعدد مستويات <span lang="en">RAID</span> (مثل مستوى 0 للتوزيع، مستوى 1 للمرآة <span lang="en">Mirroring</span>، ومستوى 5 لتوزيع معلومات التكافؤ <span lang="en">Parity</span>). بالإضافة إلى ذلك، تتيح شبكات التخزين <span lang="en">Storage Area Networks (SANs)</span> فصل أجهزة التخزين وربطها عبر شبكات عالية السرعة لمسافات تصل إلى 10 كيلومترات.</p>
+        </div>
+        <div class="flow-btns">
+            <span class="flow-btn">RAID 0 (Striping)</span>
+            <span class="flow-btn">RAID 1 (Mirroring)</span>
+            <span class="flow-btn">RAID 5 (Distributed Parity)</span>
+        </div>
+    </div>
+
+    <!-- خلاصة للمراجعة -->
+    <div class="card summary-card">
+        <h2>✅ خلاصة للمراجعة السريعة</h2>
+        <ul>
+            <li><strong>التخزين الثانوي:</strong> يعتمد على البلوكات <span lang="en">Blocks</span> والقطاعات <span lang="en">Sectors</span> وتتأثر أوقات النقل بزمن البحث <span lang="en">Seek Time</span> والتأخير الدوراني <span lang="en">Latency</span>.</li>
+            <li><strong>الملفات غير المرتبة (Heap):</strong> بحثها خطي وتكلفته $b/2$.</li>
+            <li><strong>الملفات المرتبة (Sorted):</strong> بحثها ثنائي وتكلفته $\log_2 b$.</li>
+            <li><strong>التجزئة (Hashing):</strong> توفر وصولاً سريعاً عبر مفتاح التجزئة وتتعامل مع التصادمات بالـ <span lang="en">Chaining</span> أو الـ <span lang="en">Open Addressing</span>.</li>
+            <li><strong>تقنية RAID:</strong> تزيد الموثوقية والأداء عبر تقنيات التوزيع <span lang="en">Striping</span> والمرآة <span lang="en">Mirroring</span> والتكافؤ <span lang="en">Parity</span>.</li>
+        </ul>
+    </div>
+
+</body>
+</html>
